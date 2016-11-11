@@ -1,15 +1,34 @@
-//
-//  main.cpp
-//  bellmanford
-//
-//  Created by sam on 11/11/16.
-//  Copyright © 2016 sam. All rights reserved.
-//
-
-#include <iostream>
+#include "header.hpp"
 
 int main(int argc, const char * argv[]) {
-    // insert code here...
-    std::cout << "Hello, World!\n";
+    
+    string file_content;
+    vector<string> splitData;
+    vector<int> graphTotals;
+    
+    //read file into a string
+    file_content = openFile(argc, argv);
+    
+    cout << "one" << endl;
+    
+    //remove special characters from string
+    splitData = splitString(file_content);
+    
+    cout << "two" << endl;
+    
+    //determine number of total vertices and edges
+    graphTotals = getVertexEdgeTotals(file_content);
+    
+    cout << "three" << endl;
+    
+    //create graph
+    struct Graph* graph = createGraph(graphTotals);
+    
+    graph = buildGraph(graph, splitData);
+    
+    free(graph);
+    
+    
+    
     return 0;
 }
