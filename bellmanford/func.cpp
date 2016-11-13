@@ -74,6 +74,7 @@ struct Graph* createGraph(vector<int> graphData) {
 
 struct Graph* buildGraph(struct Graph* graph, vector<string> graphString) {
     int edgeCount = 0;
+    graph->edge = new Edge[graph->edges];
     
     for(int i = 0; i <= graphString.size()-1; i++) {
         vector<string> parsedVertexString;
@@ -82,7 +83,6 @@ struct Graph* buildGraph(struct Graph* graph, vector<string> graphString) {
         parsedVertexString = removeNonCharacters(vertexString);
         string headVertex = parsedVertexString[0];
         
-        graph->edge = new Edge[graph->edges];
         for(int j = 1; j < parsedVertexString.size()-1; j+=2) {
             graph->edge[edgeCount].src = headVertex;
             graph->edge[edgeCount].dest = parsedVertexString[j];
@@ -92,10 +92,75 @@ struct Graph* buildGraph(struct Graph* graph, vector<string> graphString) {
         
     }
     
-    cout << graph->edge[8].src << " " << graph->edge[8].dest << " " << graph->edge[8].weight << endl;
-    
     
     return graph;
+}
+
+void bellmanford(struct Graph* graph) {
+    int V = graph->vertex;
+    int E = graph->edges;
+    vector<string> vertexKey;
+    int dist[V];
+
+    for (int i = 0; i < V; i++)
+        dist[i] = INT_MAX;
+    dist[0] = 0;
+
+    vertexKey = populateKey(graph);
+    
+    for (int i = 1; i <= V-1; i++)
+    {
+        for (int j = 0; j < E; j++)
+        {
+            int u = getPosition(graph->edge[j].src, vertexKey, E);
+            int v = getPosition(graph->edge[j].dest, vertexKey, E);
+            int weight = graph->edge[j].weight;
+            if (dist[u] != INT_MAX && dist[u] + weight < dist[v])
+                dist[v] = dist[u] + weight;
+        }
+    }
+    
+    for (int i = 0; i < E; i++)
+    {
+        int u = getPosition(graph->edge[i].src, vertexKey, E);
+        int v = getPosition(graph->edge[i].dest, vertexKey, E);
+        int weight = graph->edge[i].weight;
+        if (dist[u] != INT_MAX && dist[u] + weight < dist[v])
+            printf("Graph contains negative weight cycle");
+    }
+    
+    printGraph(dist, V, vertexKey);
+}
+
+vector<string> populateKey(struct Graph* graph) {
+    int j = 0;
+    int i = 0;
+    vector<string> key;
+    
+    while (i < graph->edges) {
+        if (key.empty()) {
+            key.push_back(graph->edge[i].src);
+        }
+        else if (key[j] == graph->edge[i].src) {}
+        else {
+            key.push_back(graph->edge[i].src);
+            j++;
+        }
+        
+        i++;
+    }
+    
+    return key;
+
+}
+
+int getPosition(string vertex, vector<string> keys, int totalEdges) {
+    for (int i = 0; i < totalEdges; i++) {
+        if(keys[i] == vertex)
+            return i;
+    }
+    
+    return -1;
 }
 
 vector<int> getVertexEdgeTotals(string data) {
@@ -107,4 +172,9 @@ vector<int> getVertexEdgeTotals(string data) {
     graphTotals.push_back(static_cast<int>(edgeTotal));
     
     return graphTotals;
+}
+
+void printGraph(int dist[], int totalVertices, vector<string> keys) {
+    for (int i = 0; i < totalVertices; ++i)
+        cout << keys[i] << " | " << dist[i] << endl;
 }

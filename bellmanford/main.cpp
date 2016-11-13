@@ -26,6 +26,8 @@ int main(int argc, const char * argv[]) {
     
     graph = buildGraph(graph, splitData);
     
+    bellmanford(graph);
+    
     free(graph);
     
     

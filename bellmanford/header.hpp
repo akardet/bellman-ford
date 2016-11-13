@@ -31,6 +31,10 @@ vector <string> removeNonCharacters(string line);
 struct Graph* createGraph(vector<int> graphData);
 struct Graph* buildGraph(struct Graph* graph, vector<string> graphString);
 vector<int> getVertexEdgeTotals(string data);
+vector<string> populateKey(struct Graph* graph);
+int getPosition(string vertex, vector<string> keys, int totalEdges);
+void bellmanford(struct Graph* graph);
+void printGraph(int dist[], int totalVertices, vector<string> keys);
 
 
 
